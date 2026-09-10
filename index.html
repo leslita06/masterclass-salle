@@ -28,6 +28,12 @@
        border-radius:6px;transition:width .6s ease}
  .fill.c{background:linear-gradient(90deg,var(--coral),#F2A78F)}
  .vide{color:var(--lav);font-size:19px;line-height:1.6}
+ .maisons{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+     padding:0 44px 10px}
+ .maisons span{font-size:15px;color:var(--lav);letter-spacing:.08em;
+     text-transform:uppercase}
+ .maisons b{background:rgba(197,196,255,.14);border:1px solid rgba(197,196,255,.28);
+     border-radius:999px;padding:6px 16px;font-size:18px;font-weight:600}
  footer{position:fixed;bottom:0;left:0;right:0;padding:10px 44px;font-size:12px;
         letter-spacing:.08em;text-transform:uppercase;color:rgba(197,196,255,.60);
         background:linear-gradient(transparent,rgba(28,15,61,.9) 40%)}
@@ -44,7 +50,8 @@
    <div id="freins"></div></section>
  </div>
 </main>
-<footer>Masterclass IMPACT IA &nbsp;·&nbsp; Yelema, l'IA pour l'Afrique.</footer>
+<div class="maisons" id="maisons"></div>
+<footer>Masterclass IMPACT IA &nbsp;·&nbsp; Yelema, l'IA pour les entreprises africaines.</footer>
 <script>
 const SRC = "mur.json";
 function barres(cible, paires, classe){
@@ -70,6 +77,11 @@ async function tic(){
     }
     barres(document.getElementById("fonctions"), d.fonctions, "");
     barres(document.getElementById("freins"), d.freins, "c");
+    const m = document.getElementById("maisons");
+    m.innerHTML = (d.maisons || []).length
+      ? "<span>Dans la salle</span>" + d.maisons.map(x =>
+          "<b>" + x.replace(/[<>&]/g, "") + "</b>").join("")
+      : "";
   }catch(e){}
 }
 tic(); setInterval(tic, 8000);
