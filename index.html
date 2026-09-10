@@ -1,0 +1,75 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ce qui vous fait perdre le plus de temps</title>
+<style>
+ :root{--deep:#301667;--deep2:#1C0F3D;--violet:#8D68FA;--lav:#C5C4FF;--lavf:#F3EFFE;
+       --coral:#E4765A;--white:#fff}
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--deep2);color:#fff;font-family:'Funnel Display',
+      'Space Grotesk',system-ui,sans-serif;min-height:100vh}
+ header{padding:26px 44px 10px;display:flex;align-items:baseline;gap:22px;
+        border-bottom:1px solid rgba(255,255,255,.12)}
+ h1{font-size:clamp(22px,2.6vw,40px);margin:0;font-weight:700;letter-spacing:-.01em}
+ .compte{margin-left:auto;font-size:clamp(16px,1.6vw,24px);color:var(--lav)}
+ .compte b{color:#fff;font-size:1.5em}
+ main{display:grid;grid-template-columns:1.55fr 1fr;gap:34px;padding:26px 44px 40px}
+ .nuage{display:flex;flex-wrap:wrap;gap:12px 16px;align-content:flex-start}
+ .t{background:rgba(141,104,250,.16);border:1px solid rgba(197,196,255,.30);
+    border-radius:14px;padding:10px 18px;line-height:1.25}
+ .t.g{background:var(--violet);border-color:var(--violet);font-weight:700}
+ .t .x{color:var(--lav);font-size:.72em;margin-left:8px}
+ section h2{font-size:13px;letter-spacing:.10em;text-transform:uppercase;
+            color:var(--violet);margin:0 0 14px}
+ .bar{margin-bottom:13px}
+ .bar .lab{display:flex;justify-content:space-between;font-size:15px;margin-bottom:5px;
+           color:#EDEAFB}
+ .piste{height:11px;background:rgba(255,255,255,.10);border-radius:6px;overflow:hidden}
+ .fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--lav));
+       border-radius:6px;transition:width .6s ease}
+ .fill.c{background:linear-gradient(90deg,var(--coral),#F2A78F)}
+ .vide{color:var(--lav);font-size:19px;line-height:1.6}
+ footer{position:fixed;bottom:0;left:0;right:0;padding:10px 44px;font-size:12px;
+        letter-spacing:.08em;text-transform:uppercase;color:rgba(197,196,255,.60);
+        background:linear-gradient(transparent,rgba(28,15,61,.9) 40%)}
+</style></head><body>
+<header><h1>Ce qui vous fait perdre le plus de temps</h1>
+ <div class="compte"><b id="n">0</b> réponses</div></header>
+<main>
+ <div><section><h2>Vos tâches</h2></section>
+  <div class="nuage" id="nuage"><div class="vide">Scannez le QR de la planche.
+   Vos réponses s'affichent ici, en direct.</div></div></div>
+ <div>
+  <section><h2>Les fonctions</h2><div id="fonctions"></div></section>
+  <section style="margin-top:30px"><h2>Ce qui empêche d'automatiser</h2>
+   <div id="freins"></div></section>
+ </div>
+</main>
+<footer>Masterclass IMPACT IA &nbsp;·&nbsp; Yelema, l'IA pour l'Afrique.</footer>
+<script>
+const SRC = "https://raw.githubusercontent.com/leslita06/masterclass-salle/main/mur.json";
+function barres(cible, paires, classe){
+  const max = Math.max(1, ...paires.map(p => p[1]));
+  cible.innerHTML = paires.map(([k, v]) => `<div class="bar">
+    <div class="lab"><span>${k}</span><span>${v}</span></div>
+    <div class="piste"><div class="fill ${classe}" style="width:${v / max * 100}%"></div></div>
+  </div>`).join("") || '<div class="vide" style="font-size:15px">En attente.</div>';
+}
+async function tic(){
+  try{
+    const d = await (await fetch(SRC + "?t=" + Date.now(), {cache:"no-store"})).json();
+    document.getElementById("n").textContent = d.repondants;
+    if (d.taches.length){
+      const max = Math.max(...d.taches.map(t => t.n));
+      document.getElementById("nuage").innerHTML = d.taches.map(t => {
+        const gros = t.n === max && max > 1;
+        const taille = 17 + (t.n / max) * 16;
+        return `<div class="t ${gros ? "g" : ""}" style="font-size:${taille}px">
+          ${t.texte.replace(/[<>&]/g, "")}${t.n > 1 ? `<span class="x">×${t.n}</span>` : ""}</div>`;
+      }).join("");
+    }
+    barres(document.getElementById("fonctions"), d.fonctions, "");
+    barres(document.getElementById("freins"), d.freins, "c");
+  }catch(e){}
+}
+tic(); setInterval(tic, 8000);
+</script></body></html>
