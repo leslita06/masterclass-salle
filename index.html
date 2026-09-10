@@ -33,7 +33,7 @@
         background:linear-gradient(transparent,rgba(28,15,61,.9) 40%)}
 </style></head><body>
 <header><h1>Ce qui vous fait perdre le plus de temps</h1>
- <div class="compte"><b id="n">0</b> réponses</div></header>
+ <div class="compte"><b id="n">0</b> <span id="mot">réponse</span></div></header>
 <main>
  <div><section><h2>Vos tâches</h2></section>
   <div class="nuage" id="nuage"><div class="vide">Scannez le QR de la planche.
@@ -58,6 +58,7 @@ async function tic(){
   try{
     const d = await (await fetch(SRC + "?t=" + Date.now(), {cache:"no-store"})).json();
     document.getElementById("n").textContent = d.repondants;
+    document.getElementById("mot").textContent = d.repondants > 1 ? "réponses" : "réponse";
     if (d.taches.length){
       const max = Math.max(...d.taches.map(t => t.n));
       document.getElementById("nuage").innerHTML = d.taches.map(t => {
